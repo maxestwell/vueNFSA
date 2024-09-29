@@ -1,8 +1,29 @@
 <script lang="ts">
+// Use a Pinia store to hold the API results through the whole app
+// Access the data by importing the store
+import { useSearchDataStore } from '@/stores/searchData'
+var store: any
+function updateStore(newData: any) {
+  // Define a variable to represent the store
+  store = useSearchDataStore()
+  // Then use store.theStoredData to get/set the collection
+  store.theStoredData = newData
+  return {
+    theStoredData: store.theStoredData
+  }
+}
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  mounted() {
+    // If there's already results, show them
+    if (store) {
+      this.resultSet = store.theStoredData
+    } else {
+      this.resultSet = []
+    }
   },
   data() {
     return {
@@ -14,7 +35,23 @@ export default {
       total: 0,
       imgURL: 'https://media.nfsacollection.net/',
       query: 'https://api.collection.nfsa.gov.au/search?limit=25&query=',
-      searchString: 'lobby'
+      searchString: 'lobby',
+      selectedCategories: []
+    }
+  },
+  computed: {
+    filteredItems() {
+      if (this.selectedCategories.length === 0) {
+        return this.resultSet // Return all items if no category is selected
+      }
+      return this.resultSet.filter(
+        (item) =>
+          (item['forms'] && this.selectedCategories.includes(item['forms'][0])) ||
+          (item['countries'] && this.selectedCategories.includes(item['countries'][0])) ||
+          (item['parentTitle'] &&
+            item['parentTitle']['genres'] &&
+            this.selectedCategories.includes(item['parentTitle']['genres'][0]))
+      )
     }
   },
   methods: {
@@ -23,6 +60,7 @@ export default {
       // in this case we use a text box which sets searchString
       // and the currentPage to allow us to loop through the paginated results
       let queryString = this.query + this.searchString + '&page=' + this.currentPage
+      // let queryString = 'https://api.collection.nfsa.gov.au/search?limit=25&query=dog&hasMedia=yes'
       console.log('API call: ' + queryString)
       fetch(queryString)
         .then((response) => {
@@ -36,7 +74,8 @@ export default {
             // if there are items
             if (this.$data.total > 0) {
               // check how many pages of results @ 25 per page
-              if (this.currentPage * 25 < 500 && this.currentPage * 25 < this.$data.total) {
+              if (this.currentPage * 25 < this.$data.total) {
+                //if (this.currentPage * 25 < 500 && this.currentPage * 25 < this.$data.total) {
                 // go to the next page
                 this.currentPage++
                 // call this function on itself (recursive) ! be careful, this can cause an infinite loop
@@ -50,6 +89,7 @@ export default {
                 this.currentPage = 1
                 console.log('Pages: ' + Math.ceil(this.$data.total / 25))
                 console.log('finished')
+                updateStore(this.$data.resultSet)
               }
             } else {
               console.log('no results')
@@ -60,20 +100,9 @@ export default {
           console.error(err)
         })
     },
-    newMethod() {
-      console.log(this.$data.resultSet)
-    },
-    resetSearch() {
+    clearResults() {
       this.$data.resultSet = []
     }
-    // filterResults(arr: theArray) {
-    //   function filter(element, index, array) {
-    //     if (this.$data.resultSet['preview'] && this.$data.resultSet['preview'][0]) {
-    //       return true
-    //     }
-    //   }
-    //   this.$data.theResults.every(filter)
-    // }
   }
 }
 </script>
@@ -84,27 +113,41 @@ export default {
 
     <input v-model="searchString" placeholder="query" />
     <button @click="fetchData">fetch data</button>
-    <button @click="newMethod">showresult</button>
-    <button @click="resetSearch">reset</button>
-    <!-- <button @click="filterResults">filter</button> -->
+    <button @click="clearResults">clear results</button>
 
     <p>Total: {{ total }}</p>
+
+    <p>Filter Items with Checkboxes</p>
+    <div>
+      <label>
+        <input type="checkbox" value="Lobby card" v-model="selectedCategories" /> Lobby card
+      </label>
+      <label>
+        <input type="checkbox" value="Australia" v-model="selectedCategories" /> From Australia
+      </label>
+      <label>
+        <input type="checkbox" value="Bushranger" v-model="selectedCategories" /> Genre: Bushranger
+      </label>
+    </div>
 
     <ul role="list" class="list-v">
       <!-- create a variable called result, 
       loop through the API results and add a list item for each result.
       Use result to access properties like 'title' and 'name' -->
-      <li v-for="(result, index) in resultSet" :key="result[index]">
-        <p>{{ result['title'] }}</p>
+      <li v-for="(result, index) in filteredItems" :key="result[index]">
+        <!-- <li v-for="(result, index) in resultSet" :key="result[index]"> -->
+        <p class="title">{{ result['title'] }}</p>
         <p>{{ result['name'] }}</p>
         <!-- check if there's any items in the preview array.  If so, put the biggest image in the view -->
         <!-- v-bind is used to update the src attribute when the data comes in -->
-        <img
-          v-if="result['preview'] && result['preview'][0]"
-          v-bind:src="imgURL + result['preview'][0]['filePath']"
-          v-bind:alt="result['name']"
-          v-bind:title="result['name']"
-        />
+        <Transition>
+          <img
+            v-if="result['preview'] && result['preview'][0]"
+            v-bind:src="imgURL + result['preview'][0]['filePath']"
+            v-bind:alt="result['name']"
+            v-bind:title="result['name']"
+          />
+        </Transition>
       </li>
     </ul>
   </div>

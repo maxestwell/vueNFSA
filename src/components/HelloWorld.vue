@@ -34,7 +34,7 @@ export default {
       currentPage: 1,
       total: 0,
       imgURL: 'https://media.nfsacollection.net/',
-      query: 'https://api.collection.nfsa.gov.au/search?limit=25&query=',
+      query: 'https://api.collection.nfsa.gov.au/search?limit=25&hasMedia=yes&query=',
       searchString: 'lobby',
       selectedCategories: []
     }
@@ -154,6 +154,42 @@ export default {
 </template>
 
 <style scoped>
+.v-enter-from {
+  opacity: 0;
+  translate: -100px 0;
+}
+.v-enter-to {
+  opacity: 1;
+  translate: 0 0;
+}
+.v-leave-from {
+  opacity: 1;
+  translate: 0 0;
+}
+.v-leave-to {
+  opacity: 0;
+  translate: 100px 0;
+}
+img {
+  display: inline-block;
+  max-width: 100%;
+  transition: all 2s;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+li {
+  max-width: 300px;
+  padding: 0.5rem;
+  border: 1px solid #ffffff33;
+}
+
 h1 {
   font-weight: 500;
   font-size: 2.6rem;
@@ -165,14 +201,22 @@ h3 {
   font-size: 1.2rem;
 }
 
-.greetings h1,
-.greetings h3 {
+.title {
+  color: #eeeeee;
+  font-weight: bold;
+  font-size: 150%;
+  line-height: 125%;
+  margin-bottom: 0.5rem;
+}
+
+.search h1,
+.search h3 {
   text-align: center;
 }
 
 @media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
+  .search h1,
+  .search h3 {
     text-align: left;
   }
 }

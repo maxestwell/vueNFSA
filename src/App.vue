@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import D3Test from './components/D3Test.vue'
+// import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <header>
     <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
-
     <div class="wrapper">
-      <!-- <HelloWorld msg="replace me" /> -->
+      <!-- <HelloWorld msg="Search the collection" /> -->
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/d3">D3 Example</RouterLink>
       </nav>
     </div>
   </header>
 
+  <D3Test />
   <!-- shows the current router view (about or home) -->
   <RouterView />
 </template>

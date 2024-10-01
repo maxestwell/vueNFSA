@@ -9,7 +9,7 @@ export default {
   name: 'D3Test',
   data() {
     return {
-      parsedData: {}
+      parsedData: []
     }
   },
   mounted() {
@@ -26,12 +26,6 @@ export default {
         this.drawChart(data)
       }
     )
-
-    // let dates = []
-    // filteredData.forEach((e, i) => {
-    //   dates[i] = e['productionDates'][0]['fromYear']
-    // })
-    // console.log(dates)
 
     this.drawChart(data)
   },
@@ -56,15 +50,18 @@ export default {
 
       // Set dimensions and margins
       const margin = { top: 20, right: 30, bottom: 40, left: 40 }
-      const width = 600 - margin.left - margin.right
-      const height = 400 - margin.top - margin.bottom
+      // const width = window.innerWidth - margin.left - margin.right
+      // const height = window.innerHeight - margin.top - margin.bottom
+
+      const width = 800 - margin.left - margin.right
+      const height = 600 - margin.top - margin.bottom
 
       // clear svg
       d3.select('svg').selectAll('*').remove()
 
       // Create SVG container
       const svg = d3
-        .select(this.$refs.svg)
+        .select(this.$refs.svg as SVGSVGElement)
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
@@ -74,33 +71,33 @@ export default {
       const x = d3
         .scaleLinear()
         .domain([
-          d3.min(this.parsedData, (d: any) => d.value),
-          d3.max(this.parsedData, (d: any) => d.value)
+          d3.min(this.parsedData, (d: any) => d.date),
+          d3.max(this.parsedData, (d: any) => d.date)
         ])
         .range([0, width])
 
       const y = d3
         .scaleLinear()
         .domain([
-          d3.min(this.parsedData, (d: any) => d.date),
-          d3.max(this.parsedData, (d: any) => d.date)
+          d3.min(this.parsedData, (d: any) => d.value),
+          d3.max(this.parsedData, (d: any) => d.value)
         ])
         .nice()
         .range([height, 0])
 
       // Create line generator
-      const line = d3
-        .line()
-        .x((d: any) => x(d.value))
-        .y((d: any) => y(d.date))
-      // Add the line path
-      svg
-        .append('path')
-        .datum(this.parsedData)
-        .attr('fill', 'none')
-        .attr('stroke', 'steelblue')
-        .attr('stroke-width', 1.5)
-        .attr('d', line)
+      // const line = d3
+      //   .line()
+      //   .x((d: any) => x(d.value))
+      //   .y((d: any) => y(d.date))
+      // // Add the line path
+      // svg
+      //   .append('path')
+      //   .datum(this.parsedData)
+      //   .attr('fill', 'none')
+      //   .attr('stroke', 'steelblue')
+      //   .attr('stroke-width', 1.5)
+      //   .attr('d', line)
 
       // Add X axis
       svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).ticks(5))
@@ -115,10 +112,10 @@ export default {
         .enter()
         .append('circle')
         .attr('class', 'dot')
-        .attr('cx', (d: any) => x(d.value))
-        .attr('cy', (d: any) => y(d.date))
+        .attr('cx', (d: any) => x(d.date))
+        .attr('cy', (d: any) => y(d.value))
         .attr('r', 4) // Radius of the dots
-        .attr('fill', 'white')
+        .attr('fill', 'lightblue')
       svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
       svg.append('g').call(d3.axisLeft(y))
     }
@@ -129,7 +126,7 @@ export default {
 <template>
   <div>
     <h2>Vue.js and D3 Chart</h2>
-    <svg ref="svg" width="600" height="400"></svg>
+    <svg ref="svg"></svg>
   </div>
 </template>
 

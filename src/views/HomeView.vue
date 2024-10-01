@@ -8,6 +8,6 @@ import Test from '../components/Test.vue'
   <main>
     <!-- <TheWelcome /> -->
     <!-- <HelloWorld msg="Search the collection" /> -->
-    <Test msg="Search the collection" />
+    <Test msg="View the collection" />
   </main>
 </template>

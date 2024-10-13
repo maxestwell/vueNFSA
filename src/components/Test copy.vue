@@ -32,7 +32,13 @@ export default {
       query: 'https://api.collection.nfsa.gov.au/search?limit=25&hasMedia=yes&query=',
       searchString: 'lobby',
       selectedCategories: [],
-      parsedData: []
+      parsedData: [] as Array<{
+        value: number
+        date: number
+        imgURL: string
+        name: string
+        summary: string
+      }>
     }
   },
   mounted() {
@@ -136,7 +142,10 @@ export default {
 
       this.parsedData = filteredData.map((d: any) => ({
         date: d['productionDates'][0]['fromYear'],
-        value: d['id']
+        value: d['id'],
+        // imgURL: d['imgURL'], // Ensure imgURL is included
+        name: d['name'], // Ensure result is included
+        summary: d['summary'] // Ensure summary is included
       }))
       console.log(this.parsedData)
 
@@ -197,6 +206,8 @@ export default {
       // Add Y axis
       svg.append('g').call(d3.axisLeft(y))
 
+      const tooltip = d3.select(this.$refs.tooltip as HTMLDivElement)
+
       // Draw dots
       svg
         .selectAll('.dot')
@@ -208,6 +219,25 @@ export default {
         .attr('cy', (d: any) => y(d.value))
         .attr('r', 4) // Radius of the dots
         .attr('fill', 'lightblue')
+        .on('mouseover', (event, d) => {
+          tooltip.transition().duration(200).style('opacity', 0.9)
+          tooltip
+            .html(
+              `
+              <div>
+                <img src="${d.imgURL}" alt="Image" style="width: 50px; height: 50px;" />
+                <p>Name: ${d.name}</p>
+                <p>Date: ${d.date}</p>
+                <p>Summary: ${d.summary}</p>
+              </div>
+            `
+            )
+            .style('left', event.pageX + 5 + 'px')
+            .style('top', event.pageY - 28 + 'px')
+        })
+        .on('mouseout', () => {
+          tooltip.transition().duration(500).style('opacity', 0)
+        })
       svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
       svg.append('g').call(d3.axisLeft(y))
     }
@@ -240,6 +270,7 @@ export default {
     <div>
       <h2>Vue.js and D3 Chart</h2>
       <svg ref="svg"></svg>
+      <div ref="tooltip" class="tooltip" style="opacity: 0"></div>
     </div>
 
     <ul role="list" class="list-v">
@@ -324,6 +355,19 @@ h3 {
 .search h1,
 .search h3 {
   text-align: center;
+}
+
+.tooltip {
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 8px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
 }
 
 @media (min-width: 1024px) {

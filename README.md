@@ -20,7 +20,7 @@ I used the Stack Overflow forums to look for similar problems I encountered. I f
 
 ## PROBLEMS
 
-1. The tooltip didn’t display the data properly. It kept on saying undefined. I worked out the problem by specifying the array properties. There are still problems with it like how I cannot style anything within .tooltip correctly and not being able to display the ingURL. [website 1 reference](https://www.pluralsight.com/resources/blog/guides/create-tooltips-in-d3js)[website 2 reference](https://d3-graph-gallery.com/graph/interactivity_tooltip.html)
+1. The tooltip didn’t display the data properly. It kept on saying undefined. I worked out the problem by specifying the array properties. There are still problems with it like how I cannot style anything within .tooltip correctly and not being able to display the ingURL. [website 1 reference](https://www.pluralsight.com/resources/blog/guides/create-tooltips-in-d3js) [website 2 reference](https://d3-graph-gallery.com/graph/interactivity_tooltip.html)
 2. The graph displayed the date on the y axis which I wanted to switch. I looked up the problem on [Stack Overflow](https://stackoverflow.com/questions/34595124/how-to-change-color-of-the-dots-in-d3-js-to-reflect-data-on-y-scale) and then went through the code to change the targeted domain properties.
 3. I wanted the dots to change colour on the axis to simulate a spectrogram display. The problem was that I could not define a HEX value as it a string.
 

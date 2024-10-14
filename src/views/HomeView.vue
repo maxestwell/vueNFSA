@@ -11,6 +11,6 @@ import Test from '../components/Test.vue'
     <!-- <D3Test /> -->
     <!-- <HelloWorld msg="Search the collection" /> -->
 
-    <Test msg="View the collection" />
+    <Test msg="View the Collection" />
   </main>
 </template>

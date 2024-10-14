@@ -226,7 +226,7 @@ export default {
               `
               <div>
                 <img src="${d.imgURL}" alt="Image" style="width: 50px; height: 50px;" />
-                <p>Name: ${d.name}</p>
+                <p>Title: ${d.name}</p>
                 <p>Date: ${d.date}</p>
                 <p>Summary: ${d.summary}</p>
               </div>

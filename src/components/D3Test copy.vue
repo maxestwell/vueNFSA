@@ -9,10 +9,10 @@ export default defineComponent({
   data() {
     return {
       parsedData: [] as Array<{
-        imgURL: string
         value: number
         date: number
-        title: string
+        imgURL: string
+        name: string
         summary: string
       }>,
       filteredItems: [] as Array<any>, // Define filteredItems here
@@ -50,7 +50,6 @@ export default defineComponent({
         value: d['id'],
         imgURL: d['imgURL'], // Ensure imgURL is included
         result: d['result'], // Ensure result is included
-        title: d['title'], // Ensure summary is included
         summary: d['summary'] // Ensure summary is included
       }))
       console.log(this.parsedData)
@@ -132,8 +131,8 @@ export default defineComponent({
             .html(
               `
               <div>
-                              <img src="${d.imgURL}" alt="Image" style="width: 50px; height: 50px;" />
-                <p>Name: ${d.title}</p>
+                <img src="${d.imgURL}" alt="Image" style="width: 50px; height: 50px;" />
+                <p>Name: ${d.name}</p>
                 <p>Date: ${d.date}</p>
                 <p>Summary: ${d.summary}</p>
               </div>

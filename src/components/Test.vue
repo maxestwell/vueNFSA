@@ -73,6 +73,9 @@ export default {
       )
     }
   },
+  filteredTitles(): string[] {
+    return this.resultSet.map((item: { title: string }) => item.title)
+  },
   methods: {
     fetchData() {
       // use dynamic data to modify the API call
@@ -124,6 +127,7 @@ export default {
     },
     drawChart(data: any) {
       console.log('chart is charting')
+      console.log(this.filteredItems)
 
       // console.log(data)
       let filteredData = data.value.filter(
@@ -136,7 +140,10 @@ export default {
 
       this.parsedData = filteredData.map((d: any) => ({
         date: d['productionDates'][0]['fromYear'],
-        value: d['id']
+        value: d['id'],
+        result: d['result'],
+        title: d['title'],
+        name: d['name']
       }))
       console.log(this.parsedData)
 
@@ -177,25 +184,20 @@ export default {
         .nice()
         .range([height, 0])
 
-      // Create line generator
-      // const line = d3
-      //   .line()
-      //   .x((d: any) => x(d.value))
-      //   .y((d: any) => y(d.date))
-      // // Add the line path
-      // svg
-      //   .append('path')
-      //   .datum(this.parsedData)
-      //   .attr('fill', 'none')
-      //   .attr('stroke', 'steelblue')
-      //   .attr('stroke-width', 1.5)
-      //   .attr('d', line)
+      const color = d3
+        .scaleSequential(d3.interpolateRgb('#330099', '#ffcc66'))
+        .domain([
+          d3.min(this.parsedData, (d: any) => d.value),
+          d3.max(this.parsedData, (d: any) => d.value)
+        ])
 
       // Add X axis
       svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).ticks(5))
 
       // Add Y axis
       svg.append('g').call(d3.axisLeft(y))
+
+      const tooltip = d3.select(this.$refs.tooltip as HTMLDivElement)
 
       // Draw dots
       svg
@@ -206,8 +208,24 @@ export default {
         .attr('class', 'dot')
         .attr('cx', (d: any) => x(d.date))
         .attr('cy', (d: any) => y(d.value))
-        .attr('r', 4) // Radius of the dots
-        .attr('fill', 'lightblue')
+        .attr('r', 10) // Radius of the dots
+        .attr('fill', (d: { date: number; value: number }) => color(d.value))
+        .on('mouseover', (event, d: { title: string; date: number; name: string }) => {
+          tooltip.transition().duration(200).style('opacity', 0.9)
+          tooltip.html(
+            `
+              <div>
+                <h2>${d.title}</h2>
+                <h3>${d.date}</h3>
+                <p>${d.name}</p>
+              </div>
+            `
+          )
+        })
+        .on('mouseout', () => {
+          tooltip.transition().duration(500).style('opacity', 0)
+        })
+
       svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
       svg.append('g').call(d3.axisLeft(y))
     }
@@ -237,9 +255,10 @@ export default {
         <input type="checkbox" value="Bushranger" v-model="selectedCategories" /> Genre: Bushranger
       </label>
     </div>
-    <div>
+    <div class="graph">
       <h2>Vue.js and D3 Chart</h2>
       <svg ref="svg"></svg>
+      <div ref="tooltip" class="tooltip" style="opacity: 0"></div>
     </div>
 
     <ul role="list" class="list-v">
@@ -282,6 +301,7 @@ export default {
   opacity: 0;
   translate: 100px 0;
 }
+
 img {
   display: inline-block;
   max-width: 100%;
@@ -310,7 +330,8 @@ h1 {
 }
 
 h3 {
-  font-size: 1.2rem;
+  font-size: 2rem;
+  font-weight: 800;
 }
 
 .title {
@@ -321,9 +342,33 @@ h3 {
   margin-bottom: 0.5rem;
 }
 
+.graph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .search h1,
 .search h3 {
   text-align: center;
+}
+
+.tooltip {
+  /* position: absolute; */
+  text-align: center;
+
+  width: auto;
+  height: auto;
+  padding: 2rem;
+  font: 24px sans-serif;
+  background: #ffcc66;
+  /* border: 8rem; */
+  border-radius: 2rem;
+  pointer-events: none;
+}
+
+.tooltip {
+  font: 100px;
 }
 
 @media (min-width: 1024px) {

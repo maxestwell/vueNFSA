@@ -30,7 +30,7 @@ export default {
       total: 0,
       imgURL: 'https://media.nfsacollection.net/',
       query: 'https://api.collection.nfsa.gov.au/search?limit=25&hasMedia=yes&query=',
-      searchString: 'lobby',
+      searchString: 'music',
       selectedCategories: [],
       parsedData: []
     }
@@ -125,6 +125,7 @@ export default {
     clearResults() {
       this.$data.resultSet = []
     },
+
     drawChart(data: any) {
       console.log('chart is charting')
       console.log(this.filteredItems)
@@ -134,17 +135,33 @@ export default {
         (item: any) =>
           item['productionDates'] &&
           item['productionDates'][0]['fromYear'] !== undefined &&
-          item['id'] !== undefined
+          item['id'] !== undefined &&
+          item['preview'][0]['type'] === 'image'
       )
       console.log(filteredData)
+      // this.parsedData = filteredData.map((d: any) => (
 
-      this.parsedData = filteredData.map((d: any) => ({
-        date: d['productionDates'][0]['fromYear'],
-        value: d['id'],
-        result: d['result'],
-        title: d['title'],
-        name: d['name']
-      }))
+      const imgURL = 'https://media.nfsacollection.net/'
+
+      this.parsedData = filteredData.map(function (d: any) {
+        if (
+          d['preview'][0]['type'] === 'image'
+          // &&
+          // d['productionDates'][0]['fromYear'] !== undefined
+        ) {
+          return {
+            date: d['productionDates'][0]['fromYear'],
+            value: d['id'],
+            result: d['result'],
+            title: d['title'],
+            name: d['name'],
+            imgURL: imgURL + d['preview'][0]['filePath']
+          }
+        } else {
+          return false
+        }
+      })
+
       console.log(this.parsedData)
 
       // Set dimensions and margins
@@ -210,22 +227,34 @@ export default {
         .attr('cy', (d: any) => y(d.value))
         .attr('r', 10) // Radius of the dots
         .attr('fill', (d: { date: number; value: number }) => color(d.value))
-        .on('mouseover', (event, d: { title: string; date: number; name: string }) => {
-          tooltip.transition().duration(200).style('opacity', 0.9)
-          tooltip.html(
-            `
+        // add regex here to remove special characters
+        .on(
+          'click',
+          (
+            event,
+            d: {
+              imgURL: any
+              title: string
+              date: number
+              name: string
+            }
+          ) => {
+            tooltip.transition().duration(200).style('opacity', 0.9)
+            tooltip.html(
+              `
               <div>
+              <img src="${d.imgURL}">
                 <h2>${d.title}</h2>
                 <h3>${d.date}</h3>
                 <p>${d.name}</p>
               </div>
             `
-          )
-        })
-        .on('mouseout', () => {
-          tooltip.transition().duration(500).style('opacity', 0)
-        })
-
+            )
+          }
+        )
+      // .on('mouseout', () => {
+      //   tooltip.transition().duration(500).style('opacity', 0)
+      // })
       svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
       svg.append('g').call(d3.axisLeft(y))
     }
@@ -258,19 +287,26 @@ export default {
     <div class="graph">
       <h2>Vue.js and D3 Chart</h2>
       <svg ref="svg"></svg>
-      <div ref="tooltip" class="tooltip" style="opacity: 0"></div>
+
+      <div ref="tooltip" class="tooltip" style="opacity: 0">
+        <!-- <div>
+          <h2>a</h2>
+          <h3>b</h3>
+          <p>c</p>
+        </div> -->
+      </div>
     </div>
 
-    <ul role="list" class="list-v">
-      <!-- create a variable called result, 
+    <!-- <ul role="list" class="list-v">
+      create a variable called result, 
       loop through the API results and add a list item for each result.
-      Use result to access properties like 'title' and 'name' -->
+      Use result to access properties like 'title' and 'name'
       <li v-for="(result, index) in filteredItems" :key="result[index]">
-        <!-- <li v-for="(result, index) in resultSet" :key="result[index]"> -->
+        <li v-for="(result, index) in resultSet" :key="result[index]">
         <p class="title">{{ result['title'] }}</p>
         <p>{{ result['name'] }}</p>
-        <!-- check if there's any items in the preview array.  If so, put the biggest image in the view -->
-        <!-- v-bind is used to update the src attribute when the data comes in -->
+        check if there's any items in the preview array.  If so, put the biggest image in the view
+        v-bind is used to update the src attribute when the data comes in
         <Transition>
           <img
             v-if="result['preview'] && result['preview'][0]"
@@ -280,7 +316,7 @@ export default {
           />
         </Transition>
       </li>
-    </ul>
+    </ul> -->
   </div>
 </template>
 
@@ -329,10 +365,10 @@ h1 {
   top: -10px;
 }
 
-h3 {
+/* h3 {
   font-size: 2rem;
   font-weight: 800;
-}
+} */
 
 .title {
   color: #eeeeee;
@@ -340,6 +376,11 @@ h3 {
   font-size: 150%;
   line-height: 125%;
   margin-bottom: 0.5rem;
+}
+
+g.tick text {
+  background-color: red;
+  fill: red;
 }
 
 .graph {

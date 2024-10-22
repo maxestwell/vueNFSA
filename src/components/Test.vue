@@ -30,7 +30,7 @@ export default {
       total: 0,
       imgURL: 'https://media.nfsacollection.net/',
       query: 'https://api.collection.nfsa.gov.au/search?limit=25&hasMedia=yes&query=',
-      searchString: 'music',
+      searchString: 'lobby',
       selectedCategories: [],
       parsedData: []
     }
@@ -264,36 +264,40 @@ export default {
 
 <template>
   <div class="search">
-    <h1 class="green">{{ msg }}</h1>
+    <div class="sts">
+      <h1 class="green">{{ msg }}</h1>
+      <div class="inputb">
+        <input v-model="searchString" class="input" placeholder="query" />
+        <button @click="fetchData">fetch&nbsp;data</button>
+        <button @click="clearResults">clear&nbsp;results</button>
+      </div>
+      <p>Total: {{ total }}</p>
 
-    <input v-model="searchString" placeholder="query" />
-    <button @click="fetchData">fetch data</button>
-    <button @click="clearResults">clear results</button>
-
-    <p>Total: {{ total }}</p>
-
-    <p>Filter Items with Checkboxes</p>
-    <div>
-      <label>
-        <input type="checkbox" value="Lobby card" v-model="selectedCategories" /> Lobby card
-      </label>
-      <label>
-        <input type="checkbox" value="Australia" v-model="selectedCategories" /> From Australia
-      </label>
-      <label>
-        <input type="checkbox" value="Bushranger" v-model="selectedCategories" /> Genre: Bushranger
-      </label>
+      <!-- <p>Filter</p>
+      <div>
+        <label>
+          <input type="checkbox" value="Lobby card" v-model="selectedCategories" /> Lobby card
+        </label>
+        <label>
+          <input type="checkbox" value="Australia" v-model="selectedCategories" /> From Australia
+        </label>
+        <label>
+          <input type="checkbox" value="Bushranger" v-model="selectedCategories" /> Genre:
+          Bushranger
+        </label>
+      </div> -->
     </div>
     <div class="graph">
-      <h2>Vue.js and D3 Chart</h2>
+      <!-- <h2>Vue.js and D3 Chart</h2> -->
       <svg ref="svg"></svg>
 
       <div ref="tooltip" class="tooltip" style="opacity: 0">
-        <!-- <div>
-          <h2>a</h2>
-          <h3>b</h3>
-          <p>c</p>
-        </div> -->
+        <div>
+          <img src="" alt="" />
+          <h2></h2>
+          <h3></h3>
+          <p></p>
+        </div>
       </div>
     </div>
 
@@ -359,7 +363,7 @@ li {
 }
 
 h1 {
-  font-weight: 500;
+  font-weight: 800;
   font-size: 2.6rem;
   position: relative;
   top: -10px;
@@ -389,16 +393,62 @@ g.tick text {
   align-items: center;
 }
 
+.input {
+  border: 1px solid grey;
+  border-radius: 5px;
+  height: 20px;
+  width: 100%;
+  padding: 15px 10px 15px 10px;
+  outline: 0;
+  background-color: #f5f5f5;
+  margin-right: 1rem;
+}
+
+.inputb {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+button:first-of-type {
+  border: 1px solid red;
+  margin-right: 1rem;
+  border-radius: 5px;
+  background-color: #ffcc66;
+}
+
+button:last-of-type {
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #a10a00;
+}
+
+.sts {
+  width: 100%;
+  padding: 1rem;
+}
+
+.search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .search h1,
 .search h3 {
   text-align: center;
 }
 
-.tooltip {
-  /* position: absolute; */
-  text-align: center;
+label {
+  display: block;
+  margin: 0.5rem;
+}
 
-  width: auto;
+.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 80%;
   height: auto;
   padding: 2rem;
   font: 24px sans-serif;
@@ -408,8 +458,10 @@ g.tick text {
   pointer-events: none;
 }
 
-.tooltip {
-  font: 100px;
+img {
+  width: 90px;
+  height: auto;
+  border-radius: 1rem;
 }
 
 @media (min-width: 1024px) {

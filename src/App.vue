@@ -70,12 +70,6 @@ nav a:first-of-type {
     margin: 0 2rem 0 0;
   }
 
-  header .wrapper {
-    /* display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap; */
-  }
-
   nav {
     text-align: left;
     margin-left: -1rem;

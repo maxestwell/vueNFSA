@@ -11,29 +11,42 @@
   padding: 0 2rem;
 }
 
+body {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #ffffff;
+  background-color: #111111;
+  margin: 0;
+  padding: 0;
+}
+
 .hide {
   display: none;
 }
 
 img {
-  width: 60%;
+  max-width: 50%;
   margin-bottom: 2rem;
   height: auto;
   border-radius: 1rem;
 }
 
-g .tick {
-  /* fill: none; */
-}
-
 g .tick text {
-  /* fill: none; */
+  font-family: 'Pixelify Sans', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
 svg g g path.domain {
   fill: none;
-  stroke-width: 15;
-  stroke: #333333;
+  /* stroke-width: 15; */
+  stroke: #ffffff;
   shape-rendering: crispEdges;
   border-radius: 1rem;
 }
@@ -41,7 +54,7 @@ svg g g path.domain {
 a,
 .green {
   text-decoration: none;
-  color: #333333;
+  color: #ffffff;
   transition: 0.4s;
   padding: 3px;
 }

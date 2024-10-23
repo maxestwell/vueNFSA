@@ -30,7 +30,7 @@ export default {
       total: 0,
       imgURL: 'https://media.nfsacollection.net/',
       query: 'https://api.collection.nfsa.gov.au/search?limit=25&hasMedia=yes&query=',
-      searchString: 'lobby',
+      searchString: 'NFSA',
       selectedCategories: [],
       parsedData: []
     }
@@ -165,12 +165,9 @@ export default {
       console.log(this.parsedData)
 
       // Set dimensions and margins
-      const margin = { top: 20, right: 30, bottom: 40, left: 40 }
-      // const width = window.innerWidth - margin.left - margin.right
-      // const height = window.innerHeight - margin.top - margin.bottom
-
-      const width = 800 - margin.left - margin.right
-      const height = 600 - margin.top - margin.bottom
+      const margin = { top: 75, right: 100, bottom: 50, left: 100 }
+      const width = window.innerWidth - margin.left - margin.right
+      const height = window.innerHeight - margin.top - margin.bottom
 
       // clear svg
       d3.select('svg').selectAll('*').remove()
@@ -190,7 +187,7 @@ export default {
           d3.min(this.parsedData, (d: any) => d.date),
           d3.max(this.parsedData, (d: any) => d.date)
         ])
-        .range([0, width])
+        .range([margin.left, width - margin.right])
 
       const y = d3
         .scaleLinear()
@@ -199,7 +196,7 @@ export default {
           d3.max(this.parsedData, (d: any) => d.value)
         ])
         .nice()
-        .range([height, 0])
+        .range([height - margin.bottom, margin.top])
 
       const color = d3
         .scaleSequential(d3.interpolateRgb('#330099', '#ffcc66'))
@@ -208,11 +205,14 @@ export default {
           d3.max(this.parsedData, (d: any) => d.value)
         ])
 
-      // Add X axis
-      svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).ticks(5))
+      // Add the x-axis.
+      svg
+        .append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x))
 
-      // Add Y axis
-      svg.append('g').call(d3.axisLeft(y))
+      // Add the y-axis.
+      svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y))
 
       const tooltip = d3.select(this.$refs.tooltip as HTMLDivElement)
 
@@ -225,7 +225,7 @@ export default {
         .attr('class', 'dot')
         .attr('cx', (d: any) => x(d.date))
         .attr('cy', (d: any) => y(d.value))
-        .attr('r', 10) // Radius of the dots
+        .attr('r', 5) // Radius of the dots
         .attr('fill', (d: { date: number; value: number }) => color(d.value))
         // add regex here to remove special characters
         .on(
@@ -242,12 +242,10 @@ export default {
             tooltip.transition().duration(200).style('opacity', 1).style('display', 'unset')
             tooltip.html(
               `
-              <div>
               <img src="${d.imgURL}">
                 <h2>${d.title}</h2>
                 <h3>${d.date}</h3>
                 <p>${d.name}</p>
-              </div>
             `
             )
             tooltip.on('click', () => {
@@ -266,60 +264,16 @@ export default {
     <div class="sts">
       <h1 class="green">{{ msg }}</h1>
       <div class="inputb">
-        <input v-model="searchString" class="input" placeholder="query" />
+        <input v-model="searchString" placeholder="query" />
         <button @click="fetchData">fetch&nbsp;data</button>
         <button @click="clearResults">clear&nbsp;results</button>
       </div>
       <p>Total: {{ total }}</p>
-
-      <!-- <p>Filter</p>
-      <div>
-        <label>
-          <input type="checkbox" value="Lobby card" v-model="selectedCategories" /> Lobby card
-        </label>
-        <label>
-          <input type="checkbox" value="Australia" v-model="selectedCategories" /> From Australia
-        </label>
-        <label>
-          <input type="checkbox" value="Bushranger" v-model="selectedCategories" /> Genre:
-          Bushranger
-        </label>
-      </div> -->
     </div>
     <div class="graph">
-      <!-- <h2>Vue.js and D3 Chart</h2> -->
       <svg ref="svg"></svg>
-
-      <div ref="tooltip" class="tooltip" style="opacity: 0">
-        <div>
-          <img src="" alt="" />
-          <h2></h2>
-          <h3></h3>
-          <p></p>
-        </div>
-      </div>
+      <div ref="tooltip" class="tooltip"></div>
     </div>
-
-    <!-- <ul role="list" class="list-v">
-      create a variable called result, 
-      loop through the API results and add a list item for each result.
-      Use result to access properties like 'title' and 'name'
-      <li v-for="(result, index) in filteredItems" :key="result[index]">
-        <li v-for="(result, index) in resultSet" :key="result[index]">
-        <p class="title">{{ result['title'] }}</p>
-        <p>{{ result['name'] }}</p>
-        check if there's any items in the preview array.  If so, put the biggest image in the view
-        v-bind is used to update the src attribute when the data comes in
-        <Transition>
-          <img
-            v-if="result['preview'] && result['preview'][0]"
-            v-bind:src="imgURL + result['preview'][0]['filePath']"
-            v-bind:alt="result['name']"
-            v-bind:title="result['name']"
-          />
-        </Transition>
-      </li>
-    </ul> -->
   </div>
 </template>
 
@@ -341,10 +295,12 @@ export default {
   translate: 100px 0;
 }
 
-img {
-  display: inline-block;
-  max-width: 100%;
-  transition: all 2s;
+.sts {
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 60%;
 }
 
 ul {
@@ -355,35 +311,11 @@ ul {
   gap: 1rem;
   justify-content: center;
 }
+
 li {
   max-width: 300px;
   padding: 0.5rem;
   border: 1px solid #ffffff33;
-}
-
-h1 {
-  font-weight: 800;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
-}
-
-/* h3 {
-  font-size: 2rem;
-  font-weight: 800;
-} */
-
-.title {
-  color: #eeeeee;
-  font-weight: bold;
-  font-size: 150%;
-  line-height: 125%;
-  margin-bottom: 0.5rem;
-}
-
-g .tick text {
-  background-color: red;
-  fill: red;
 }
 
 .graph {
@@ -392,7 +324,7 @@ g .tick text {
   align-items: center;
 }
 
-.input {
+input {
   border: 1px solid grey;
   border-radius: 5px;
   height: 20px;
@@ -411,32 +343,16 @@ g .tick text {
 }
 
 button:first-of-type {
-  border: 1px solid red;
+  border: 1px solid #a10a00;
   margin-right: 1rem;
   border-radius: 5px;
-  background-color: #ffcc66;
+  /* background-color: #ffcc66; */
 }
 
 button:last-of-type {
-  border: 1px solid black;
+  border: 1px solid #a10a00;
   border-radius: 5px;
-  background-color: #a10a00;
-}
-
-.sts {
-  width: 100%;
-  padding: 1rem;
-}
-
-.search {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.search h1,
-.search h3 {
-  text-align: center;
+  /* background-color: #a10a00; */
 }
 
 label {
@@ -444,30 +360,22 @@ label {
   margin: 0.5rem;
 }
 
+img {
+  display: inline-block;
+  max-width: 100%;
+  transition: all 2s;
+}
+
 .tooltip {
   position: absolute;
   text-align: center;
-  width: 80%;
+
+  top: 20%;
+  background-color: #a10a00;
+  width: 50%;
   height: auto;
-  padding: 2rem;
-  font: 24px sans-serif;
-  background: #ffcc66;
-  /* border: 8rem; */
-  border-radius: 2rem;
+  padding: 1rem;
+  opacity: 0;
   display: none;
-  /* pointer-events: none; */
-}
-
-img {
-  width: 90px;
-  height: auto;
-  border-radius: 1rem;
-}
-
-@media (min-width: 1024px) {
-  .search h1,
-  .search h3 {
-    text-align: left;
-  }
 }
 </style>

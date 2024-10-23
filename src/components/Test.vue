@@ -239,7 +239,7 @@ export default {
               name: string
             }
           ) => {
-            tooltip.transition().duration(200).style('opacity', 0.9)
+            tooltip.transition().duration(200).style('opacity', 1).style('display', 'unset')
             tooltip.html(
               `
               <div>
@@ -250,13 +250,12 @@ export default {
               </div>
             `
             )
+            tooltip.on('click', () => {
+              tooltip.transition().duration(500).style('opacity', 0).style('display', 'none')
+              console.log('clicked')
+            })
           }
         )
-      // .on('mouseout', () => {
-      //   tooltip.transition().duration(500).style('opacity', 0)
-      // })
-      svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
-      svg.append('g').call(d3.axisLeft(y))
     }
   }
 }
@@ -382,7 +381,7 @@ h1 {
   margin-bottom: 0.5rem;
 }
 
-g.tick text {
+g .tick text {
   background-color: red;
   fill: red;
 }
@@ -455,7 +454,7 @@ label {
   background: #ffcc66;
   /* border: 8rem; */
   border-radius: 2rem;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 img {

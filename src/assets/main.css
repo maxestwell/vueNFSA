@@ -29,6 +29,25 @@ body {
   display: none;
 }
 
+.tooltip h1 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-right: 1rem;
+}
+
+.tooltip h2 {
+  font-size: 2rem;
+}
+
+.tooltip h3 {
+  padding-bottom: 1rem;
+}
+
+.tooltip p {
+  text-transform: lowercase;
+}
+
 img {
   max-width: 50%;
   margin-bottom: 2rem;

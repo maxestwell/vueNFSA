@@ -242,6 +242,7 @@ export default {
             tooltip.transition().duration(200).style('opacity', 1).style('display', 'unset')
             tooltip.html(
               `
+              <h1>x</h1>
               <img src="${d.imgURL}">
                 <h2>${d.title}</h2>
                 <h3>${d.date}</h3>
@@ -265,8 +266,8 @@ export default {
       <h1 class="green">{{ msg }}</h1>
       <div class="inputb">
         <input v-model="searchString" placeholder="query" />
-        <button @click="fetchData">fetch&nbsp;data</button>
-        <button @click="clearResults">clear&nbsp;results</button>
+        <button @click="fetchData">SEARCH</button>
+        <!-- <button @click="clearResults">clear&nbsp;results</button> -->
       </div>
       <p>Total: {{ total }}</p>
     </div>
@@ -342,18 +343,18 @@ input {
   width: 100%;
 }
 
-button:first-of-type {
+/* button:first-of-type {
   border: 1px solid #a10a00;
   margin-right: 1rem;
   border-radius: 5px;
-  /* background-color: #ffcc66; */
+  background-color: #ffcc66;
 }
 
 button:last-of-type {
   border: 1px solid #a10a00;
   border-radius: 5px;
-  /* background-color: #a10a00; */
-}
+  background-color: #a10a00;
+} */
 
 label {
   display: block;

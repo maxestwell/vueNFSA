@@ -454,6 +454,7 @@ label {
   background: #ffcc66;
   /* border: 8rem; */
   border-radius: 2rem;
+  display: none;
   /* pointer-events: none; */
 }
 

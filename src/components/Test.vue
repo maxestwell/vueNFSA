@@ -239,18 +239,28 @@ export default {
               name: string
             }
           ) => {
-            tooltip.transition().duration(200).style('opacity', 1).style('display', 'unset')
+            tooltip
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+              .style('display', 'unset')
+              .style('pointer-events', 'all')
+
             tooltip.html(
               `
-              <h1>x</h1>
-              <img src="${d.imgURL}">
-                <h2>${d.title}</h2>
-                <h3>${d.date}</h3>
-                <p>${d.name}</p>
+              <div class="intooltip">
+                <h1>x</h1>
+                <img src="${d.imgURL}">
+                <div>
+                  <h2>${d.title}</h2>
+                  <h3>${d.date}</h3>
+                  <p>${d.name}</p>
+                  </div>
+              </div>
             `
             )
             tooltip.on('click', () => {
-              tooltip.transition().duration(500).style('opacity', 0).style('display', 'none')
+              tooltip.transition().duration(500).style('opacity', 0).style('pointer-events', 'none')
               console.log('clicked')
             })
           }
@@ -369,12 +379,13 @@ img {
 
 .tooltip {
   position: absolute;
-  text-align: center;
+  /* text-align: center; */
 
-  top: 20%;
+  top: 15%;
   background-color: #a10a00;
-  width: 50%;
-  height: auto;
+  width: 80%;
+  border-radius: 0.5rem;
+  /* height: 100%; */
   padding: 1rem;
   opacity: 0;
   display: none;

@@ -277,7 +277,7 @@ export default {
       <div class="inputb">
         <input v-model="searchString" placeholder="query" />
         <button @click="fetchData">SEARCH</button>
-        <!-- <button @click="clearResults">clear&nbsp;results</button> -->
+        <!-- <button @click="clearResults">RESET</button> -->
       </div>
       <p>Total: {{ total }}</p>
     </div>
